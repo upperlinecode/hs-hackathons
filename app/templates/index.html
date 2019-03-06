@@ -1,0 +1,23 @@
+<html>
+    <head>
+        <title>High School Hackathons</title>
+    </head>
+    <body>
+      <div class="header">
+        <h1>High School Hackathons</h1>
+        <p>Your source for great coding events.</p>
+        <a>Log In</a>
+        <br>
+        <a>Sign Up</a>
+      </div>
+      <div class="event-list">
+        <ul>
+          {% for event in events %}
+            <li>{{ event.event_name }} - {{ event.event_date }} - {{ event.event_website }}</li>
+          {% endfor %}
+        </ul>
+        <a href="/hackathons/new">Post a new hackathon</a>
+      </div>
+
+    </body>
+</html>
