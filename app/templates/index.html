@@ -6,9 +6,15 @@
       <div class="header">
         <h1>High School Hackathons</h1>
         <p>Your source for great coding events.</p>
-        <a>Log In</a>
+        {% if not user:%}
+        <a href="/log-in">Log In</a>
         <br>
-        <a>Sign Up</a>
+        <a href="/sign-up">Sign Up</a>
+        {% else: %}
+        <p>
+          Hi {{user}}
+        </p>
+        {%endif%}
       </div>
       <div class="event-list">
         <ul>
