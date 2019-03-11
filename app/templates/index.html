@@ -14,6 +14,7 @@
         <p>
           Hi {{user}}
         </p>
+        <a href="/log-out">Log Out</a>
         {%endif%}
       </div>
       <div class="event-list">
@@ -22,7 +23,11 @@
             <li>{{ event.event_name }} - {{ event.event_date }} - {{ event.event_website }}</li>
           {% endfor %}
         </ul>
+        {% if user: %}
         <a href="/hackathons/new">Post a new hackathon</a>
+        {% else: %}
+        <p><a href="/sign-up">Sign up</a> or <a href="/log-in">log in</a> to post an event</p>
+        {%endif%}
       </div>
 
     </body>

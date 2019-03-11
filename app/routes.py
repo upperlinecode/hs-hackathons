@@ -1,7 +1,10 @@
 import os
 from app import app
-from flask import render_template, request, redirect
+from flask import render_template, request, redirect, session
 import pyrebase
+
+app.secret_key = os.environ['SECRET_KEY']
+
 
 config = {
   "apiKey": os.environ['FIREBASE_APIKEY'],
@@ -25,9 +28,9 @@ auth = firebase.auth()
 def index():
     events = db.child("events").get().val().values()
     #This is not working. How to check if a user is logged in??? it is not finding the user variable
-    try:
-        return render_template('index.html', events = events, user=user)
-    except:
+    if 'user' in session:
+        return render_template('index.html', events = events, user=session['user']['email'])
+    else:
         print("no user")
         return render_template('index.html', events = events)
 
@@ -40,6 +43,7 @@ def new_hackathon():
         return render_template('new_hackathon.html')
     else:
         new_event = dict(request.form)
+        user = session['user']
         db.child("events").push(new_event, user['idToken'])
         print(new_event)
         return redirect('hackathons')
@@ -54,7 +58,8 @@ def sign_up():
     else:
         new_user = dict(request.form)
         try:
-            auth.create_user_with_email_and_password(new_user["email"], new_user["password"])
+            user = auth.create_user_with_email_and_password(new_user["email"], new_user["password"])
+            session['user'] = user
         except:
             print("unable to create account")
         return redirect('hackathons')
@@ -64,14 +69,21 @@ def sign_up():
 @app.route('/log-in', methods=['GET', 'POST'])
 
 def log_in():
+    session
     if request.method == "GET":
         return render_template('log_in.html')
     else:
         logging_in_user = dict(request.form)
         try:
             user = auth.sign_in_with_email_and_password(logging_in_user["email"], logging_in_user["password"])
-            if user:
-                print("signed in")
+            session['user'] = user
         except:
             print("unable to log in")
         return redirect('hackathons')
+
+
+@app.route('/log-out')
+
+def log_out():
+    session.pop('user', None)
+    return redirect('hackathons')
